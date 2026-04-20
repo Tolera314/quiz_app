@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { apiFetch } from "@/utils/api";
+import AdminSidebar from "@/components/AdminSidebar";
+import Navbar from "@/components/Navbar";
 
 interface Option {
   id: string;
@@ -21,6 +23,7 @@ export default function EditQuizPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -168,8 +171,13 @@ export default function EditQuizPage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center text-accent">Loading engine...</div>;
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-12 font-dm-sans">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-background">
+      <Navbar onToggle={() => setIsSidebarOpen(!isSidebarOpen)} brandText="Admin Core" />
+      <AdminSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+      <main className={`transition-all duration-300 pt-16 ${isSidebarOpen ? "md:pl-72" : "pl-0"}`}>
+        <div className="p-6 md:p-12 font-dm-sans">
+          <div className="max-w-5xl mx-auto">
         <header className="mb-12 flex justify-between items-end">
           <div>
             <button 
@@ -397,6 +405,8 @@ export default function EditQuizPage() {
           </div>
         </div>
       </div>
+        </div>
+      </main>
     </div>
   );
 }

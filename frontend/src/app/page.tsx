@@ -9,10 +9,6 @@ export default function Home() {
       </div>
 
       <div className="max-w-4xl space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-        <span className="inline-block px-4 py-1.5 rounded-full border border-accent/20 bg-accent/5 text-accent text-xs font-bold tracking-[0.2em] uppercase">
-          Production-Ready MVP
-        </span>
-        
         <h1 className="text-6xl md:text-8xl font-syne font-black text-white leading-tight">
           TEST YOUR <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-white">POTENTIAL.</span>

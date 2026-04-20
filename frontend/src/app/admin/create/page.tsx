@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/utils/api";
+import AdminSidebar from "@/components/AdminSidebar";
+import Navbar from "@/components/Navbar";
 
 interface QuestionInput {
   text: string;
@@ -13,6 +15,7 @@ export default function CreateQuizPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Quiz Info
   const [title, setTitle] = useState("");
@@ -117,8 +120,13 @@ export default function CreateQuizPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-12 font-dm-sans">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-background">
+      <Navbar onToggle={() => setIsSidebarOpen(!isSidebarOpen)} brandText="Admin Core" />
+      <AdminSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      
+      <main className={`transition-all duration-300 pt-16 ${isSidebarOpen ? "md:pl-72" : "pl-0"}`}>
+        <div className="p-6 md:p-12 font-dm-sans">
+          <div className="max-w-4xl mx-auto">
         <header className="mb-12 flex justify-between items-end">
           <div>
             <button 
@@ -294,7 +302,9 @@ export default function CreateQuizPage() {
             </div>
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </main>
+  </div>
   );
 }

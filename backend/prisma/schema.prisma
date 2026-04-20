@@ -59,7 +59,7 @@ model Attempt {
   id               String   @id @default(cuid())
   user             User     @relation(fields: [userId], references: [id])
   userId           String
-  quiz             Quiz     @relation(fields: [quizId], references: [id])
+  quiz             Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
   quizId           String
   score            Int      @default(0)
   startedAt        DateTime @default(now())
@@ -70,11 +70,11 @@ model Attempt {
 
 model Answer {
   id               String   @id @default(cuid())
-  attempt          Attempt  @relation(fields: [attemptId], references: [id])
+  attempt          Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
   attemptId        String
-  question         Question @relation(fields: [questionId], references: [id])
+  question         Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId       String
-  selectedOption   Option   @relation(fields: [selectedOptionId], references: [id])
+  selectedOption   Option   @relation(fields: [selectedOptionId], references: [id], onDelete: Cascade)
   selectedOptionId String
 
   @@unique([attemptId, questionId])

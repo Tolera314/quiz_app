@@ -146,6 +146,28 @@ const createQuestion = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getQuizAnalytics, updateQuestion, deleteQuestion, bulkUploadQuestions, createQuestion };
+const getUsers = async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        _count: {
+          select: { attempts: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+};
+
+module.exports = { getStats, getQuizAnalytics, updateQuestion, deleteQuestion, bulkUploadQuestions, createQuestion, getUsers };
 
 

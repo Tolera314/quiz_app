@@ -83,22 +83,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={() => setRole("user")}
-              className={`flex-1 py-3 rounded-xl border ${role === "user" ? "bg-accent/10 border-accent text-accent" : "bg-transparent border-card-border text-foreground/40"} transition-all font-medium text-sm`}
-            >
-              Student
-            </button>
-            <button
-              type="button"
-              onClick={() => setRole("admin")}
-              className={`flex-1 py-3 rounded-xl border ${role === "admin" ? "bg-accent/10 border-accent text-accent" : "bg-transparent border-card-border text-foreground/40"} transition-all font-medium text-sm`}
-            >
-              Administrator
-            </button>
-          </div>
+          <input type="hidden" value="user" />
 
           <button
             type="submit"

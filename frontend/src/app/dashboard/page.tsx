@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { apiFetch } from "@/utils/api";
 import Link from "next/link";
+import StudentSidebar from "@/components/StudentSidebar";
+import Navbar from "@/components/Navbar";
 
 interface Quiz {
   id: string;
@@ -21,12 +23,15 @@ interface Attempt {
 }
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [unfinishedAttempt, setUnfinishedAttempt] = useState<Attempt | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
+
     const fetchData = async () => {
       try {
         const [quizzesData, unfinishedData] = await Promise.all([
@@ -41,30 +46,29 @@ export default function DashboardPage() {
         setLoading(false);
       }
     };
-    fetchData();
-  }, []);
+    
+    if (user) {
+      fetchData();
+    }
+  }, [user, authLoading]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-accent">Loading quizzes...</div>;
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-12 font-dm-sans">
-      <header className="flex justify-between items-center mb-12">
-        <div>
-          <h1 className="text-4xl font-syne font-bold text-white mb-2">
-            Hello, <span className="text-accent">{user?.name}</span>
-          </h1>
-          <p className="text-foreground/40 text-lg">Ready to test your knowledge today?</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link href="/history" className="text-foreground/60 hover:text-white transition-colors text-sm font-bold uppercase tracking-widest px-4">History</Link>
-          <button
-            onClick={logout}
-            className="px-6 py-2 rounded-xl border border-card-border hover:bg-error/10 hover:text-error transition-all font-bold"
-          >
-            Logout
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <Navbar onToggle={() => setIsSidebarOpen(!isSidebarOpen)} brandText="Arena" />
+      <StudentSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      
+      <main className={`transition-all duration-300 pt-16 ${isSidebarOpen ? "md:pl-72" : "pl-0"}`}>
+        <div className="p-6 md:p-12 font-dm-sans">
+        <header className="flex justify-between items-center mb-12">
+          <div>
+            <h1 className="text-5xl font-syne font-black text-white uppercase tracking-tighter">
+              Arena
+            </h1>
+            <p className="text-foreground/40 text-lg">Welcome back, {user?.name}. Selection is your only task.</p>
+          </div>
+        </header>
 
       {/* CONTINUE LAST QUIZ SECTION */}
       {unfinishedAttempt && (
@@ -146,6 +150,8 @@ export default function DashboardPage() {
           </div>
         )}
       </section>
+        </div>
+      </main>
     </div>
   );
 }

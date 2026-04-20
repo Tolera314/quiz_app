@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import { apiFetch } from "@/utils/api";
 import Link from "next/link";
 import { format } from "date-fns";
+import { useAuth } from "@/context/AuthContext";
+import StudentSidebar from "@/components/StudentSidebar";
+import Navbar from "@/components/Navbar";
 
 interface Attempt {
   id: string;
@@ -16,10 +19,14 @@ interface Attempt {
 }
 
 export default function HistoryPage() {
+  const { user, loading: authLoading } = useAuth();
   const [history, setHistory] = useState<Attempt[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
+
     const fetchHistory = async () => {
       try {
         const data = await apiFetch("/attempts/history");
@@ -30,22 +37,27 @@ export default function HistoryPage() {
         setLoading(false);
       }
     };
-    fetchHistory();
-  }, []);
+    
+    if (user) {
+      fetchHistory();
+    }
+  }, [user, authLoading]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-accent">Loading history...</div>;
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-12">
-      <header className="flex justify-between items-center mb-12">
-        <div>
-          <h1 className="text-3xl font-syne font-bold text-white">Attempt History</h1>
-          <p className="text-foreground/40 font-dm-sans">Track your growth and past performances.</p>
-        </div>
-        <Link href="/dashboard" className="px-4 py-2 rounded-lg border border-card-border hover:bg-white/5 transition-all text-sm font-bold">
-          Back to Dashboard
-        </Link>
-      </header>
+    <div className="min-h-screen bg-background">
+      <Navbar onToggle={() => setIsSidebarOpen(!isSidebarOpen)} brandText="Attempt Lore" />
+      <StudentSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+      <main className={`transition-all duration-300 pt-16 ${isSidebarOpen ? "md:pl-72" : "pl-0"}`}>
+        <div className="p-6 md:p-12">
+          <header className="flex justify-between items-center mb-12">
+            <div>
+              <h1 className="text-3xl font-syne font-bold text-white">Attempt History</h1>
+              <p className="text-foreground/40 font-dm-sans">Track your growth and past performances.</p>
+            </div>
+          </header>
 
       <div className="max-w-4xl mx-auto space-y-4">
         {history.length === 0 ? (
@@ -84,6 +96,8 @@ export default function HistoryPage() {
           ))
         )}
       </div>
+        </div>
+      </main>
     </div>
   );
 }

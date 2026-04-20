@@ -1,10 +1,11 @@
 const express = require("express");
-const { getStats, getQuizAnalytics, updateQuestion, deleteQuestion, bulkUploadQuestions, createQuestion } = require("../controllers/adminController");
+const { getStats, getQuizAnalytics, updateQuestion, deleteQuestion, bulkUploadQuestions, createQuestion, getUsers } = require("../controllers/adminController");
 const { authMiddleware, adminMiddleware } = require("../middleware/auth");
 
 const router = express.Router();
 
 router.get("/stats", authMiddleware, adminMiddleware, getStats);
+router.get("/users", authMiddleware, adminMiddleware, getUsers);
 router.get("/quizzes/:id/analytics", authMiddleware, adminMiddleware, getQuizAnalytics);
 router.put("/questions/:id", authMiddleware, adminMiddleware, updateQuestion);
 router.delete("/questions/:id", authMiddleware, adminMiddleware, deleteQuestion);

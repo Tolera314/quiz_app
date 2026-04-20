@@ -22,10 +22,13 @@ interface Quiz {
   questions: Question[];
 }
 
+import { useAuth } from "@/context/AuthContext";
+
 export default function QuizPage() {
   const { id } = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -37,10 +40,18 @@ export default function QuizPage() {
 
   // START OR RESUME ATTEMPT
   useEffect(() => {
+    if (authLoading) return;
+
     const initializeQuiz = async () => {
       try {
         const resumeId = searchParams.get("attemptId");
         let currentAttemptId = resumeId;
+        
+        if (!user) {
+          router.push("/auth/login");
+          return;
+        }
+
         let initialAnswers: any = {};
         let initialTimeLeft = 0;
 
@@ -87,8 +98,11 @@ export default function QuizPage() {
         setLoading(false);
       }
     };
-    initializeQuiz();
-  }, [id, router, searchParams]);
+
+    if (user) {
+      initializeQuiz();
+    }
+  }, [id, router, searchParams, user, authLoading]);
 
 
 

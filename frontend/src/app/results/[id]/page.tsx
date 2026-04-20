@@ -2,7 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { apiFetch } from "@/utils/api";
+import StudentSidebar from "@/components/StudentSidebar";
+import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import Leaderboard from "@/components/Leaderboard";
 
@@ -36,12 +39,18 @@ interface Attempt {
   answers: Answer[];
 }
 
+
+
 export default function ResultsPage() {
   const { id } = useParams();
+  const { user, loading: authLoading } = useAuth();
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
+
     const fetchResults = async () => {
       try {
         const data = await apiFetch(`/attempts/${id}`);
@@ -52,8 +61,11 @@ export default function ResultsPage() {
         setLoading(false);
       }
     };
-    fetchResults();
-  }, [id]);
+    
+    if (user) {
+      fetchResults();
+    }
+  }, [id, user, authLoading]);
 
   if (loading || !attempt) return <div className="min-h-screen flex items-center justify-center text-accent">Calculating results...</div>;
 
@@ -69,8 +81,13 @@ export default function ResultsPage() {
   const timeTakenStr = `${minutes}m ${seconds}s`;
 
   return (
-    <div className="min-h-screen bg-background text-white p-6 md:p-12 font-dm-sans">
-      <div className="max-w-3xl mx-auto text-center mb-16">
+    <div className="min-h-screen bg-background">
+      <Navbar onToggle={() => setIsSidebarOpen(!isSidebarOpen)} brandText="Lore Archive" />
+      <StudentSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+      <main className={`transition-all duration-300 pt-16 ${isSidebarOpen ? "md:pl-72" : "pl-0"}`}>
+        <div className="p-6 md:p-12 font-dm-sans">
+          <div className="max-w-3xl mx-auto text-center mb-16">
         <h1 className="text-xl font-syne text-foreground/20 uppercase tracking-[.4em] mb-6">Quiz Finalized</h1>
         <h2 className="text-6xl md:text-7xl font-syne font-black text-white mb-12 leading-none">{attempt.quiz.title}</h2>
         
@@ -154,6 +171,8 @@ export default function ResultsPage() {
         })}
         </section>
       </div>
+        </div>
+      </main>
     </div>
   );
 }

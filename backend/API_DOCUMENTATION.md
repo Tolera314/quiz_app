@@ -27,7 +27,7 @@ This document outlines all the web services, API endpoints, methods, and their d
 | GET | `/:id/leaderboard` | Get the top 10 scores for a specific quiz. | `quizController.js` -> `getLeaderboard` |
 | POST | `/` | **(Admin Only)** Create a new quiz. | `quizController.js` -> `createQuiz` |
 | PUT | `/:id` | **(Admin Only)** Update quiz details (title, description, etc.). | `quizController.js` -> `updateQuiz` |
-| DELETE | `/:id` | **(Admin Only)** Delete a quiz and its related questions. | `quizController.js` -> `deleteQuiz` |
+| DELETE | `/:id` | **(Admin Only)** Delete a quiz and its related questions, attempts, and answers (Cascading). | `quizController.js` -> `deleteQuiz` |
 | POST | `/questions` | **(Admin Only)** Add multiple questions to a quiz. | `quizController.js` -> `addQuestions` |
 
 ---
@@ -52,6 +52,7 @@ This document outlines all the web services, API endpoints, methods, and their d
 | Method | Endpoint | Description | Location in Controller |
 | :--- | :--- | :--- | :--- |
 | GET | `/stats` | Get overview statistics (Total users, quizzes, attempts). | `adminController.js` -> `getStats` |
+| GET | `/users` | **(Admin Only)** Get all users with their roles and attempt counts. | `adminController.js` -> `getUsers` |
 | GET | `/quizzes/:id/analytics` | Get detailed analytics for a specific quiz (Avg score, highest score). | `adminController.js` -> `getQuizAnalytics` |
 | PUT | `/questions/:id` | Update a specific question and its options. | `adminController.js` -> `updateQuestion` |
 | DELETE | `/questions/:id` | Delete a specific question. | `adminController.js` -> `deleteQuestion` |
