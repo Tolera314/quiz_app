@@ -17,11 +17,13 @@ const authRoutes = require("./routes/auth");
 const quizRoutes = require("./routes/quiz");
 const attemptRoutes = require("./routes/attempt");
 const adminRoutes = require("./routes/admin");
+const quizApiRoutes = require("./routes/quizApi");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/quizzes", quizRoutes);
 app.use("/api/attempts", attemptRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/quizapi", quizApiRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

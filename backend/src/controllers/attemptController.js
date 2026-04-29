@@ -8,7 +8,8 @@ const startAttempt = async (req, res) => {
     const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
     if (!quiz) return res.status(404).json({ error: "Quiz not found" });
 
-    const scheduledEndTime = new Date(Date.now() + (quiz.timeLimit || 0) * 1000);
+    const timeLimit = quiz.timeLimit ?? 600; // Default 10 minutes if not configured
+    const scheduledEndTime = new Date(Date.now() + timeLimit * 1000);
 
     const attempt = await prisma.attempt.create({
       data: {
