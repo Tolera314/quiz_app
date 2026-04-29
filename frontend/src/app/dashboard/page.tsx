@@ -33,20 +33,26 @@ export default function DashboardPage() {
     if (authLoading) return;
 
     const fetchData = async () => {
+      // Fetch quizzes — critical, must succeed
       try {
-        const [quizzesData, unfinishedData] = await Promise.all([
-          apiFetch("/quizzes"),
-          apiFetch("/attempts/latest-unfinished"),
-        ]);
+        const quizzesData = await apiFetch("/quizzes");
         setQuizzes(quizzesData);
-        setUnfinishedAttempt(unfinishedData);
       } catch (err) {
-        console.error("Failed to fetch dashboard data", err);
-      } finally {
-        setLoading(false);
+        console.error("Failed to fetch quizzes", err);
       }
+
+      // Fetch unfinished attempt — optional, failure is non-fatal
+      try {
+        const unfinishedData = await apiFetch("/attempts/latest-unfinished");
+        setUnfinishedAttempt(unfinishedData ?? null);
+      } catch (err) {
+        console.error("Failed to fetch latest unfinished attempt", err);
+        setUnfinishedAttempt(null);
+      }
+
+      setLoading(false);
     };
-    
+
     if (user) {
       fetchData();
     }

@@ -86,9 +86,10 @@ export default function QuizPage() {
         setAttemptId(currentAttemptId);
         setAnswers(initialAnswers);
         if (!resumeId) {
-          setTimeLeft(quizData.timeLimit);
+          // Default to 600s (10 min) if quiz has no time limit set
+          setTimeLeft(quizData.timeLimit ?? 600);
         } else {
-          setTimeLeft(initialTimeLeft);
+          setTimeLeft(initialTimeLeft > 0 ? initialTimeLeft : quizData.timeLimit ?? 600);
         }
 
       } catch (err) {
@@ -137,7 +138,9 @@ export default function QuizPage() {
 
   // TIMER LOGIC
   useEffect(() => {
-    if (timeLeft <= 0 && !loading && quiz && !isSubmittingRef.current) {
+    // Guard: only auto-submit if timeLeft is a valid number > 0 that has hit 0
+    // Prevents firing on initial render (timeLeft=0) or with null values
+    if (typeof timeLeft === 'number' && timeLeft <= 0 && !loading && quiz && !isSubmittingRef.current) {
       handleSubmit();
       return;
     }
